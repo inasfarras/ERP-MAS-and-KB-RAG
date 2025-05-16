@@ -212,3 +212,11 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Failed to create transaction" }, { status: 500 })
   }
 }
+
+export async function GETMock() {
+  return NextResponse.json([
+    { id: 1, type: 'Invoice', amount: 1234.56, date: '2024-03-15', status: 'Paid' },
+    { id: 2, type: 'Payment', amount: 2345.67, date: '2024-03-14', status: 'Completed' },
+    { id: 3, type: 'Invoice', amount: 3456.78, date: '2024-03-13', status: 'Pending' },
+  ]);
+}

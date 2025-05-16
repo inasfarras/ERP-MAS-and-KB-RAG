@@ -1,20 +1,27 @@
-import type { Metadata } from 'next'
-import './globals.css'
+import './globals.css';
+import Navigation from './components/Navigation';
+import { Inter } from 'next/font/google';
 
-export const metadata: Metadata = {
-  title: 'v0 App',
-  description: 'Created with v0',
-  generator: 'v0.dev',
-}
+const inter = Inter({ subsets: ['latin'] });
+
+export const metadata = {
+  title: 'ERP System',
+  description: 'Modern Enterprise Resource Planning System',
+};
 
 export default function RootLayout({
   children,
-}: Readonly<{
-  children: React.ReactNode
-}>) {
+}: {
+  children: React.ReactNode;
+}) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <body className={inter.className}>
+        <Navigation />
+        <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          {children}
+        </main>
+      </body>
     </html>
-  )
+  );
 }

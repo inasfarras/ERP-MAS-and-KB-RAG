@@ -1,23 +1,13 @@
-"use client"
-
-import { useEffect, useState } from "react"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { BarChart } from "@/components/ui/chart"
-import { Plus, ArrowUp, ArrowDown, FileText } from "lucide-react"
-import Link from "next/link"
 import { 
+  ShoppingCartIcon,
   CurrencyDollarIcon,
-  BanknotesIcon,
-  CreditCardIcon,
-  DocumentTextIcon,
+  UserGroupIcon,
+  ChartBarIcon,
   ArrowTrendingUpIcon,
   ArrowTrendingDownIcon
 } from '@heroicons/react/24/outline';
 
-interface FinancialMetric {
+interface SalesMetric {
   name: string;
   value: string;
   change: string;
@@ -25,143 +15,79 @@ interface FinancialMetric {
   icon: any; // Using any for now to resolve type issues
 }
 
-interface Transaction {
+interface Order {
   id: number;
-  type: string;
+  customer: string;
   amount: string;
   date: string;
-  status: 'Paid' | 'Pending' | 'Completed';
+  status: 'Completed' | 'Processing' | 'Cancelled';
 }
 
-interface Account {
-  id: number;
-  name: string;
-  type: string;
-  balance: number;
-}
-
-const financialMetrics: FinancialMetric[] = [
+const salesMetrics: SalesMetric[] = [
   {
-    name: 'Total Revenue',
-    value: '$45,231.89',
-    change: '+20.1%',
+    name: 'Total Sales',
+    value: '$89,231.89',
+    change: '+15.1%',
+    changeType: 'increase',
+    icon: ShoppingCartIcon,
+  },
+  {
+    name: 'Average Order Value',
+    value: '$234.56',
+    change: '+8.3%',
     changeType: 'increase',
     icon: CurrencyDollarIcon,
   },
   {
-    name: 'Accounts Receivable',
-    value: '$12,345.67',
-    change: '+5.3%',
+    name: 'Active Customers',
+    value: '1,234',
+    change: '+12.5%',
     changeType: 'increase',
-    icon: BanknotesIcon,
+    icon: UserGroupIcon,
   },
   {
-    name: 'Accounts Payable',
-    value: '$8,765.43',
-    change: '-2.1%',
+    name: 'Conversion Rate',
+    value: '3.2%',
+    change: '-0.5%',
     changeType: 'decrease',
-    icon: CreditCardIcon,
-  },
-  {
-    name: 'Outstanding Invoices',
-    value: '24',
-    change: '-3',
-    changeType: 'decrease',
-    icon: DocumentTextIcon,
+    icon: ChartBarIcon,
   },
 ];
 
-const recentTransactions: Transaction[] = [
+const recentOrders: Order[] = [
   {
     id: 1,
-    type: 'Invoice',
+    customer: 'Acme Corp',
     amount: '$1,234.56',
     date: '2024-03-15',
-    status: 'Paid',
-  },
-  {
-    id: 2,
-    type: 'Payment',
-    amount: '$2,345.67',
-    date: '2024-03-14',
     status: 'Completed',
   },
   {
+    id: 2,
+    customer: 'TechStart Inc',
+    amount: '$2,345.67',
+    date: '2024-03-14',
+    status: 'Processing',
+  },
+  {
     id: 3,
-    type: 'Invoice',
+    customer: 'Global Services',
     amount: '$3,456.78',
     date: '2024-03-13',
-    status: 'Pending',
+    status: 'Completed',
   },
 ];
 
-export default function FinancePage() {
-  const [transactions, setTransactions] = useState<Transaction[]>([])
-  const [accounts, setAccounts] = useState<Account[]>([])
-  const [loading, setLoading] = useState(true)
-
-  useEffect(() => {
-    async function fetchFinancialData() {
-      try {
-        const [transactionsRes, accountsRes] = await Promise.all([
-          fetch("/api/finance/transactions"),
-          fetch("/api/finance/accounts"),
-        ])
-
-        const transactionsData = await transactionsRes.json()
-        const accountsData = await accountsRes.json()
-
-        setTransactions(transactionsData)
-        setAccounts(accountsData || [])
-      } catch (error) {
-        console.error("Error fetching financial data:", error)
-      } finally {
-        setLoading(false)
-      }
-    }
-
-    fetchFinancialData()
-  }, [])
-
-  const formatCurrency = (value: number) => {
-    return new Intl.NumberFormat("en-US", {
-      style: "currency",
-      currency: "USD",
-    }).format(value)
-  }
-
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString("en-US", {
-      year: "numeric",
-      month: "short",
-      day: "numeric",
-    })
-  }
-
-  // Calculate financial metrics
-  const totalAssets = accounts.filter((a) => a.type === "asset").reduce((sum, account) => sum + account.balance, 0)
-
-  const totalLiabilities = accounts
-    .filter((a) => a.type === "liability")
-    .reduce((sum, account) => sum + account.balance, 0)
-
-  const totalEquity = accounts.filter((a) => a.type === "equity").reduce((sum, account) => sum + account.balance, 0)
-
-  const totalRevenue = accounts.filter((a) => a.type === "revenue").reduce((sum, account) => sum + account.balance, 0)
-
-  const totalExpenses = accounts.filter((a) => a.type === "expense").reduce((sum, account) => sum + account.balance, 0)
-
-  const netIncome = totalRevenue - totalExpenses
-
+export default function SalesPage() {
   return (
     <div className="space-y-6">
       <div className="sm:flex sm:items-center sm:justify-between">
         <div>
           <h2 className="text-2xl font-bold leading-7 text-gray-900 sm:truncate sm:text-3xl sm:tracking-tight">
-            Finance Dashboard
+            Sales Dashboard
           </h2>
           <p className="mt-1 text-sm text-gray-500">
-            Overview of your financial metrics and recent transactions
+            Overview of your sales performance and recent orders
           </p>
         </div>
         <div className="mt-4 sm:ml-4 sm:mt-0">
@@ -169,15 +95,15 @@ export default function FinancePage() {
             type="button"
             className="inline-flex items-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
           >
-            New Transaction
+            New Order
           </button>
         </div>
       </div>
 
       <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
-        {financialMetrics.map((metric) => {
+        {salesMetrics.map((metric) => {
           const Icon = metric.icon;
-          const ArrowIcon: any = metric.changeType === 'increase' ? ArrowTrendingUpIcon : ArrowTrendingDownIcon;
+          const ArrowIcon = metric.changeType === 'increase' ? ArrowTrendingUpIcon : ArrowTrendingDownIcon;
           return (
             <div
               key={metric.name}
@@ -225,7 +151,7 @@ export default function FinancePage() {
       <div className="bg-white shadow rounded-lg">
         <div className="px-4 py-5 sm:p-6">
           <h3 className="text-lg font-medium leading-6 text-gray-900">
-            Recent Transactions
+            Recent Orders
           </h3>
           <div className="mt-6 flow-root">
             <div className="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
@@ -237,7 +163,7 @@ export default function FinancePage() {
                         scope="col"
                         className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-0"
                       >
-                        Type
+                        Customer
                       </th>
                       <th
                         scope="col"
@@ -260,28 +186,28 @@ export default function FinancePage() {
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-gray-200">
-                    {recentTransactions.map((transaction) => (
-                      <tr key={transaction.id}>
+                    {recentOrders.map((order) => (
+                      <tr key={order.id}>
                         <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-0">
-                          {transaction.type}
+                          {order.customer}
                         </td>
                         <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                          {transaction.amount}
+                          {order.amount}
                         </td>
                         <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                          {transaction.date}
+                          {order.date}
                         </td>
                         <td className="whitespace-nowrap px-3 py-4 text-sm">
                           <span
                             className={`inline-flex items-center rounded-md px-2 py-1 text-xs font-medium ${
-                              transaction.status === 'Paid'
+                              order.status === 'Completed'
                                 ? 'bg-green-50 text-green-700 ring-1 ring-inset ring-green-600/20'
-                                : transaction.status === 'Pending'
+                                : order.status === 'Processing'
                                 ? 'bg-yellow-50 text-yellow-700 ring-1 ring-inset ring-yellow-600/20'
-                                : 'bg-blue-50 text-blue-700 ring-1 ring-inset ring-blue-600/20'
+                                : 'bg-red-50 text-red-700 ring-1 ring-inset ring-red-600/20'
                             }`}
                           >
-                            {transaction.status}
+                            {order.status}
                           </span>
                         </td>
                       </tr>
@@ -294,5 +220,5 @@ export default function FinancePage() {
         </div>
       </div>
     </div>
-  )
-}
+  );
+} 

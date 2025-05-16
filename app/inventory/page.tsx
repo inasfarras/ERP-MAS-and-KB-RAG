@@ -8,6 +8,12 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Badge } from "@/components/ui/badge"
 import { Search, Plus, AlertTriangle } from "lucide-react"
 import Link from "next/link"
+import { 
+  CubeIcon,
+  ArrowTrendingUpIcon,
+  ArrowTrendingDownIcon,
+  ExclamationTriangleIcon
+} from '@heroicons/react/24/outline';
 
 interface Product {
   id: number
@@ -21,6 +27,77 @@ interface Product {
   reorder_quantity: number
   lead_time_days: number
 }
+
+interface InventoryMetric {
+  name: string;
+  value: string;
+  change: string;
+  changeType: 'increase' | 'decrease';
+  icon: any; // Using any for now to resolve type issues
+}
+
+interface StockItem {
+  id: number;
+  name: string;
+  sku: string;
+  quantity: number;
+  status: 'In Stock' | 'Low Stock' | 'Out of Stock';
+}
+
+const inventoryMetrics: InventoryMetric[] = [
+  {
+    name: 'Total Items',
+    value: '1,234',
+    change: '+5.2%',
+    changeType: 'increase',
+    icon: CubeIcon,
+  },
+  {
+    name: 'Low Stock Items',
+    value: '23',
+    change: '-2.1%',
+    changeType: 'decrease',
+    icon: ExclamationTriangleIcon,
+  },
+  {
+    name: 'Out of Stock',
+    value: '5',
+    change: '+1.0%',
+    changeType: 'increase',
+    icon: ExclamationTriangleIcon,
+  },
+  {
+    name: 'Total Value',
+    value: '$234,567.89',
+    change: '+8.3%',
+    changeType: 'increase',
+    icon: CubeIcon,
+  },
+];
+
+const stockItems: StockItem[] = [
+  {
+    id: 1,
+    name: 'Laptop Pro X1',
+    sku: 'LP-X1-2024',
+    quantity: 45,
+    status: 'In Stock',
+  },
+  {
+    id: 2,
+    name: 'Wireless Mouse',
+    sku: 'WM-001',
+    quantity: 5,
+    status: 'Low Stock',
+  },
+  {
+    id: 3,
+    name: '4K Monitor',
+    sku: 'MN-4K-27',
+    quantity: 0,
+    status: 'Out of Stock',
+  },
+];
 
 export default function InventoryPage() {
   const [products, setProducts] = useState<Product[]>([])
@@ -72,47 +149,85 @@ export default function InventoryPage() {
     }).format(value)
   }
 
+  const getStockStatus = (product: Product) => {
+    if (product.stock_quantity === 0) return 'Out of Stock'
+    if (product.stock_quantity <= product.reorder_level) return 'Low Stock'
+    return 'In Stock'
+  }
+
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case 'In Stock':
+        return 'bg-green-50 text-green-700 ring-1 ring-inset ring-green-600/20'
+      case 'Low Stock':
+        return 'bg-yellow-50 text-yellow-700 ring-1 ring-inset ring-yellow-600/20'
+      case 'Out of Stock':
+        return 'bg-red-50 text-red-700 ring-1 ring-inset ring-red-600/20'
+      default:
+        return 'bg-gray-50 text-gray-700 ring-1 ring-inset ring-gray-600/20'
+    }
+  }
+
   return (
-    <div className="p-6 max-w-7xl mx-auto">
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold">Inventory Management</h1>
-        <Button>
-          <Plus className="mr-2 h-4 w-4" /> Add Product
-        </Button>
+    <div className="space-y-6 p-6 max-w-7xl mx-auto">
+      <div className="sm:flex sm:items-center sm:justify-between">
+        <div>
+          <h2 className="text-2xl font-bold leading-7 text-gray-900 sm:truncate sm:text-3xl sm:tracking-tight">
+            Inventory Management
+          </h2>
+          <p className="mt-1 text-sm text-gray-500">
+            Overview of your inventory levels and stock status
+          </p>
+        </div>
+        <div className="mt-4 sm:ml-4 sm:mt-0">
+          <Button>
+            <Plus className="mr-2 h-4 w-4" /> Add Product
+          </Button>
+        </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium">Total Products</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{products.length}</div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium">Low Stock Items</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-amber-500">
-              {products.filter((p) => p.stock_quantity <= p.reorder_level).length}
-            </div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium">Inventory Value</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">
-              {formatCurrency(products.reduce((sum, p) => sum + p.unit_price * p.stock_quantity, 0))}
-            </div>
-          </CardContent>
-        </Card>
+      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+        {inventoryMetrics.map((metric) => {
+          const Icon = metric.icon;
+          const ArrowIcon = metric.changeType === 'increase' ? ArrowTrendingUpIcon : ArrowTrendingDownIcon;
+          return (
+            <Card key={metric.name}>
+              <CardHeader className="pb-2">
+                <div className="flex items-center">
+                  <div className="flex-shrink-0">
+                    <Icon className="h-6 w-6 text-gray-400" aria-hidden="true" />
+                  </div>
+                  <div className="ml-5 w-0 flex-1">
+                    <CardTitle className="text-sm font-medium text-gray-500 truncate">
+                      {metric.name}
+                    </CardTitle>
+                    <div className="text-2xl font-bold text-gray-900">
+                      {metric.value}
+                    </div>
+                  </div>
+                </div>
+              </CardHeader>
+              <CardContent>
+                <div className="text-sm">
+                  <span
+                    className={`inline-flex items-center font-medium ${
+                      metric.changeType === 'increase'
+                        ? 'text-green-600'
+                        : 'text-red-600'
+                    }`}
+                  >
+                    <ArrowIcon className="h-4 w-4 mr-1" />
+                    {metric.change}
+                  </span>
+                  <span className="text-gray-500 ml-2">from last month</span>
+                </div>
+              </CardContent>
+            </Card>
+          );
+        })}
       </div>
 
-      <Card className="mb-6">
+      <Card>
         <CardHeader>
           <CardTitle>Products</CardTitle>
           <CardDescription>Manage your inventory and stock levels</CardDescription>
@@ -168,45 +283,34 @@ export default function InventoryPage() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {filteredProducts.map((product) => (
-                    <TableRow key={product.id}>
-                      <TableCell className="font-medium">{product.sku}</TableCell>
-                      <TableCell>{product.name}</TableCell>
-                      <TableCell>{product.category}</TableCell>
-                      <TableCell className="text-right">{formatCurrency(product.unit_price)}</TableCell>
-                      <TableCell className="text-right">{product.stock_quantity}</TableCell>
-                      <TableCell className="text-right">
-                        {product.stock_quantity === 0 ? (
-                          <Badge variant="destructive">Out of Stock</Badge>
-                        ) : product.stock_quantity <= product.reorder_level ? (
-                          <Badge variant="warning" className="bg-amber-500">
-                            Low Stock
-                          </Badge>
-                        ) : (
-                          <Badge variant="outline" className="bg-green-100 text-green-800 hover:bg-green-100">
-                            In Stock
-                          </Badge>
-                        )}
-                      </TableCell>
-                      <TableCell>
-                        <Button variant="ghost" size="sm" asChild>
-                          <Link href={`/inventory/products/${product.id}`}>View</Link>
-                        </Button>
-                      </TableCell>
-                    </TableRow>
-                  ))}
+                  {filteredProducts.map((product) => {
+                    const status = getStockStatus(product);
+                    return (
+                      <TableRow key={product.id}>
+                        <TableCell className="font-medium">{product.sku}</TableCell>
+                        <TableCell>{product.name}</TableCell>
+                        <TableCell>{product.category}</TableCell>
+                        <TableCell className="text-right">{formatCurrency(product.unit_price)}</TableCell>
+                        <TableCell className="text-right">{product.stock_quantity}</TableCell>
+                        <TableCell className="text-right">
+                          <span className={`inline-flex items-center rounded-md px-2 py-1 text-xs font-medium ${getStatusColor(status)}`}>
+                            {status}
+                          </span>
+                        </TableCell>
+                        <TableCell>
+                          <Button variant="ghost" size="sm">
+                            Edit
+                          </Button>
+                        </TableCell>
+                      </TableRow>
+                    );
+                  })}
                 </TableBody>
               </Table>
             </div>
           )}
         </CardContent>
-        <CardFooter className="flex justify-between">
-          <Button variant="outline">Export</Button>
-          <div className="text-sm text-gray-500">
-            Showing {filteredProducts.length} of {products.length} products
-          </div>
-        </CardFooter>
       </Card>
     </div>
-  )
+  );
 }
