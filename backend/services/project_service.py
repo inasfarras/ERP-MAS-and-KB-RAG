@@ -77,7 +77,7 @@ async def get_project(project_id: int, db: Session = Depends(get_db)):
     return project
 
 @router.put("/projects/{project_id}", response_model=schemas.Project)
-async def update_project(project_id: int, project: schemas.ProjectCreate, db: Session = Depends(get_db)):
+async def update_project(project_id: int, project: schemas.ProjectUpdate, db: Session = Depends(get_db)):
     db_project = db.query(models.Project).filter(models.Project.id == project_id).first()
     if db_project is None:
         raise HTTPException(status_code=404, detail="Project not found")
@@ -89,7 +89,9 @@ async def update_project(project_id: int, project: schemas.ProjectCreate, db: Se
             raise HTTPException(status_code=404, detail="Customer not found")
     
     # Update project
-    for key, value in project.dict(exclude={"tasks"}).items():
+    update_data = project.dict(exclude_unset=True)
+    update_data.pop("tasks", None)
+    for key, value in update_data.items():
         setattr(db_project, key, value)
     
     db.commit()
@@ -97,15 +99,16 @@ async def update_project(project_id: int, project: schemas.ProjectCreate, db: Se
     return db_project
 
 @router.put("/projects/{project_id}/status", response_model=schemas.Project)
-async def update_project_status(project_id: int, status: str, db: Session = Depends(get_db)):
+async def update_project_status(project_id: int, status_update: schemas.StatusUpdate, db: Session = Depends(get_db)):
     db_project = db.query(models.Project).filter(models.Project.id == project_id).first()
     if db_project is None:
         raise HTTPException(status_code=404, detail="Project not found")
     
+    status = status_update.status
     valid_statuses = ["planning", "active", "on-hold", "completed"]
     if status not in valid_statuses:
         raise HTTPException(status_code=400, detail=f"Invalid status. Must be one of: {', '.join(valid_statuses)}")
-    
+
     db_project.status = status
     db.commit()
     db.refresh(db_project)
@@ -190,17 +193,19 @@ async def update_task(task_id: int, task: schemas.TaskCreate, db: Session = Depe
     return db_task
 
 @router.put("/tasks/{task_id}/status", response_model=schemas.Task)
-async def update_task_status(task_id: int, status: str, progress: Optional[int] = None, db: Session = Depends(get_db)):
+async def update_task_status(task_id: int, status_update: schemas.StatusUpdate, db: Session = Depends(get_db)):
     db_task = db.query(models.Task).filter(models.Task.id == task_id).first()
     if db_task is None:
         raise HTTPException(status_code=404, detail="Task not found")
     
+    status = status_update.status
+    progress = status_update.progress
     valid_statuses = ["not-started", "in-progress", "completed", "delayed"]
     if status not in valid_statuses:
         raise HTTPException(status_code=400, detail=f"Invalid status. Must be one of: {', '.join(valid_statuses)}")
-    
+
     db_task.status = status
-    
+
     if progress is not None:
         if progress < 0 or progress > 100:
             raise HTTPException(status_code=400, detail="Progress must be between 0 and 100")
@@ -272,35 +277,29 @@ async def get_project_performance(
             "in_progress_tasks": in_progress_tasks,
             "not_started_tasks": not_started_tasks,
             "delayed_tasks": delayed_tasks,
-            "completion_rate": completed_tasks / total_tasks if total_tasks > 0 else 0
+            "completion_rate": completed_tasks / total_tasks if total_tasks > 0 else 0,
         },
-        "progress": {
-            "overall_progress": overall_progress,
-            "timeline_progress": timeline_progress,
-            "on_track": on_track
-        },
-        "financial": {
+        "overall_progress": overall_progress,
+        "financial_statistics": {
             "total_expenses": total_expenses,
             "total_revenue": total_revenue,
             "budget_utilization": budget_utilization,
-            "profit_loss": total_revenue - total_expenses
+            "profit_loss": total_revenue - total_expenses,
         },
         "timeline": {
             "total_days": project_duration,
             "elapsed_days": elapsed_days,
-            "remaining_days": remaining_days
-        }
+            "remaining_days": remaining_days,
+        },
     }
 
 @router.get("/reports/resource-allocation")
 async def get_resource_allocation(db: Session = Depends(get_db)):
-    # Get all active tasks
     active_tasks = db.query(models.Task).filter(
         models.Task.status.in_(["not-started", "in-progress"]),
         models.Task.assigned_to.isnot(None)
     ).all()
-    
-    # Group by user
+
     user_allocations = {}
     for task in active_tasks:
         user_id = task.assigned_to
@@ -313,8 +312,27 @@ async def get_resource_allocation(db: Session = Depends(get_db)):
                 "projects": set(),
                 "tasks": []
             }
-        
+
         project = db.query(models.Project).filter(models.Project.id == task.project_id).first()
-        
+        if project:
+            user_allocations[user_id]["projects"].add(project.name)
+
         user_allocations[user_id]["task_count"] += 1
-        user_allocations[user_id]["projects"].add(task)
+        user_allocations[user_id]["tasks"].append(task.name)
+
+    resource_allocations = []
+    total_tasks = 0
+    for alloc in user_allocations.values():
+        alloc["projects"] = list(alloc["projects"])
+        total_tasks += alloc["task_count"]
+        resource_allocations.append(alloc)
+
+    workload_summary = {
+        "total_users": len(resource_allocations),
+        "total_tasks": total_tasks,
+    }
+
+    return {
+        "resource_allocations": resource_allocations,
+        "workload_summary": workload_summary,
+    }

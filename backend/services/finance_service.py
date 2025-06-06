@@ -216,11 +216,12 @@ async def get_invoices(
     return invoices
 
 @router.put("/invoices/{invoice_id}/status", response_model=schemas.Invoice)
-async def update_invoice_status(invoice_id: int, status: str, db: Session = Depends(get_db)):
+async def update_invoice_status(invoice_id: int, status_update: schemas.StatusUpdate, db: Session = Depends(get_db)):
     db_invoice = db.query(models.Invoice).filter(models.Invoice.id == invoice_id).first()
     if db_invoice is None:
         raise HTTPException(status_code=404, detail="Invoice not found")
-    
+
+    status = status_update.status
     valid_statuses = ["draft", "sent", "paid", "overdue"]
     if status not in valid_statuses:
         raise HTTPException(status_code=400, detail=f"Invalid status. Must be one of: {', '.join(valid_statuses)}")

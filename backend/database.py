@@ -7,14 +7,17 @@ from dotenv import load_dotenv
 # Load environment variables from .env file
 load_dotenv()
 
-# Get database URL from environment variable
-SQLALCHEMY_DATABASE_URL = os.getenv("DATABASE_URL")
+# Get database URL from environment variable. Fall back to a local SQLite
+# database if none is provided.
+SQLALCHEMY_DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///erp.db")
 
-if not SQLALCHEMY_DATABASE_URL:
-    raise ValueError("DATABASE_URL environment variable is not set")
+# Additional connection arguments for SQLite
+connect_args = {
+    "check_same_thread": False
+} if SQLALCHEMY_DATABASE_URL.startswith("sqlite") else {}
 
 # Create SQLAlchemy engine
-engine = create_engine(SQLALCHEMY_DATABASE_URL)
+engine = create_engine(SQLALCHEMY_DATABASE_URL, connect_args=connect_args)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 Base = declarative_base()

@@ -45,12 +45,13 @@ async def get_product(product_id: int, db: Session = Depends(get_db)):
     return product
 
 @router.put("/products/{product_id}", response_model=schemas.Product)
-async def update_product(product_id: int, product: schemas.ProductCreate, db: Session = Depends(get_db)):
+async def update_product(product_id: int, product: schemas.ProductUpdate, db: Session = Depends(get_db)):
     db_product = db.query(models.Product).filter(models.Product.id == product_id).first()
     if db_product is None:
         raise HTTPException(status_code=404, detail="Product not found")
-    
-    for key, value in product.dict().items():
+
+    update_data = product.dict(exclude_unset=True)
+    for key, value in update_data.items():
         setattr(db_product, key, value)
     
     db.commit()
@@ -209,11 +210,12 @@ async def get_purchase_orders(
     return purchase_orders
 
 @router.put("/purchase-orders/{po_id}/status", response_model=schemas.PurchaseOrder)
-async def update_purchase_order_status(po_id: int, status: str, db: Session = Depends(get_db)):
+async def update_purchase_order_status(po_id: int, status_update: schemas.StatusUpdate, db: Session = Depends(get_db)):
     db_po = db.query(models.PurchaseOrder).filter(models.PurchaseOrder.id == po_id).first()
     if db_po is None:
         raise HTTPException(status_code=404, detail="Purchase Order not found")
-    
+
+    status = status_update.status
     valid_statuses = ["draft", "sent", "received", "cancelled"]
     if status not in valid_statuses:
         raise HTTPException(status_code=400, detail=f"Invalid status. Must be one of: {', '.join(valid_statuses)}")
@@ -265,7 +267,7 @@ async def get_inventory_valuation(db: Session = Depends(get_db)):
         })
     
     return {
-        "total_valuation": total_valuation,
+        "total_value": total_valuation,
         "products": product_valuations
     }
 
@@ -372,6 +374,5 @@ async def get_low_stock_report(db: Session = Depends(get_db)):
         })
     
     return {
-        "low_stock_count": len(result),
-        "products": result
+        "low_stock_items": result,
     }
