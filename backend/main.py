@@ -16,7 +16,8 @@ from services import (
     sales_service,
     inventory_service,
     process_service,
-    project_service
+    project_service,
+    dashboard_service,
 )
 from docs import (
     API_TITLE,
@@ -194,6 +195,12 @@ app.include_router(
     project_service.router,
     prefix="/api/projects",
     tags=["Project & Job Management"]
+)
+
+app.include_router(
+    dashboard_service.router,
+    prefix="/api/dashboard",
+    tags=["Business Intelligence"]
 )
 
 # Extension points for future MAS and KG-RAG integration
