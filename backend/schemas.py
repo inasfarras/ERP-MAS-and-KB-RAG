@@ -61,6 +61,10 @@ class TransactionUpdate(BaseModel):
     order_id: Optional[int] = None
     project_id: Optional[int] = None
 
+class StatusUpdate(BaseModel):
+    status: str
+    progress: Optional[int] = None
+
 class Transaction(TransactionBase, TimestampMixin):
     id: int
     
@@ -98,6 +102,14 @@ class CustomerBase(BaseModel):
 
 class CustomerCreate(CustomerBase):
     pass
+
+class CustomerUpdate(BaseModel):
+    name: Optional[str] = None
+    contact_person: Optional[str] = None
+    email: Optional[str] = None
+    phone: Optional[str] = None
+    address: Optional[str] = None
+    credit_limit: Optional[float] = None
 
 class Customer(CustomerBase, TimestampMixin):
     id: int
@@ -155,6 +167,17 @@ class ProductBase(BaseModel):
 
 class ProductCreate(ProductBase):
     pass
+
+class ProductUpdate(BaseModel):
+    sku: Optional[str] = None
+    name: Optional[str] = None
+    description: Optional[str] = None
+    category: Optional[str] = None
+    unit_price: Optional[float] = None
+    stock_quantity: Optional[int] = None
+    reorder_level: Optional[int] = None
+    reorder_quantity: Optional[int] = None
+    lead_time_days: Optional[int] = None
 
 class Product(ProductBase, TimestampMixin):
     id: int
@@ -317,6 +340,16 @@ class ProjectBase(BaseModel):
 
 class ProjectCreate(ProjectBase):
     tasks: Optional[List[TaskCreate]] = None
+
+class ProjectUpdate(BaseModel):
+    project_code: Optional[str] = None
+    name: Optional[str] = None
+    description: Optional[str] = None
+    customer_id: Optional[int] = None
+    start_date: Optional[datetime] = None
+    end_date: Optional[datetime] = None
+    budget: Optional[float] = None
+    status: Optional[str] = None
 
 class Project(ProjectBase, TimestampMixin):
     id: int

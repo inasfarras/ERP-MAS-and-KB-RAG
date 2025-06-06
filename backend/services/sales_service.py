@@ -32,12 +32,13 @@ async def get_customer(customer_id: int, db: Session = Depends(get_db)):
     return customer
 
 @router.put("/customers/{customer_id}", response_model=schemas.Customer)
-async def update_customer(customer_id: int, customer: schemas.CustomerCreate, db: Session = Depends(get_db)):
+async def update_customer(customer_id: int, customer: schemas.CustomerUpdate, db: Session = Depends(get_db)):
     db_customer = db.query(models.Customer).filter(models.Customer.id == customer_id).first()
     if db_customer is None:
         raise HTTPException(status_code=404, detail="Customer not found")
-    
-    for key, value in customer.dict().items():
+
+    update_data = customer.dict(exclude_unset=True)
+    for key, value in update_data.items():
         setattr(db_customer, key, value)
     
     db.commit()
@@ -148,11 +149,12 @@ async def get_order(order_id: int, db: Session = Depends(get_db)):
     return order
 
 @router.put("/orders/{order_id}/status", response_model=schemas.Order)
-async def update_order_status(order_id: int, status: str, db: Session = Depends(get_db)):
+async def update_order_status(order_id: int, status_update: schemas.StatusUpdate, db: Session = Depends(get_db)):
     db_order = db.query(models.Order).filter(models.Order.id == order_id).first()
     if db_order is None:
         raise HTTPException(status_code=404, detail="Order not found")
-    
+
+    status = status_update.status
     valid_statuses = ["draft", "confirmed", "processing", "shipped", "delivered", "cancelled"]
     if status not in valid_statuses:
         raise HTTPException(status_code=400, detail=f"Invalid status. Must be one of: {', '.join(valid_statuses)}")
