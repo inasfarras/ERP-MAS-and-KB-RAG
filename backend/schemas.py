@@ -458,3 +458,19 @@ class StandardResponse(BaseModel):
     success: bool
     message: str
     data: Optional[Any] = None
+
+# Dashboard schemas
+class DashboardNotification(BaseModel):
+    id: int
+    message: str
+    date: datetime
+
+
+class DashboardSummary(BaseModel):
+    """Aggregated metrics returned by the dashboard service."""
+
+    financial_kpis: Dict[str, float]
+    active_orders: int
+    low_stock_items: int
+    sales_trend: List[Dict[str, Any]]
+    notifications: List[Dict[str, Any]]
