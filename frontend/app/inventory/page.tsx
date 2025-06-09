@@ -12,6 +12,7 @@ import {
   ArrowTrendingDownIcon,
   ExclamationTriangleIcon
 } from '@heroicons/react/24/outline';
+import withAuth from "@/components/withAuth";
 
 interface Product {
   id: number
@@ -65,8 +66,7 @@ const inventoryMetrics: InventoryMetric[] = [
   },
 ];
 
-
-export default function InventoryPage() {
+function InventoryPage() {
   const [products, setProducts] = useState<Product[]>([])
   const [loading, setLoading] = useState(true)
   const [searchTerm, setSearchTerm] = useState("")
@@ -283,3 +283,5 @@ export default function InventoryPage() {
     </div>
   );
 }
+
+export default withAuth(InventoryPage);

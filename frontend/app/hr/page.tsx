@@ -1,6 +1,9 @@
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+"use client";
 
-export default function HRPage() {
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import withAuth from "@/components/withAuth";
+
+function HRPage() {
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 py-12 md:py-24">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
@@ -35,4 +38,6 @@ export default function HRPage() {
       </div>
     </div>
   );
-} 
+}
+
+export default withAuth(HRPage); 

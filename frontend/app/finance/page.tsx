@@ -10,6 +10,7 @@ import {
   ArrowTrendingUpIcon,
   ArrowTrendingDownIcon
 } from '@heroicons/react/24/outline';
+import withAuth from "@/components/withAuth";
 
 interface FinancialMetric {
   name: string
@@ -83,7 +84,7 @@ const recentTransactions: Transaction[] = [
   },
 ];
 
-export default function FinancePage() {
+function FinancePage() {
 
   return (
     <div className="space-y-6">
@@ -231,3 +232,5 @@ export default function FinancePage() {
     </div>
   )
 }
+
+export default withAuth(FinancePage);
