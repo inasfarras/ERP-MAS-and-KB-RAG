@@ -1,18 +1,19 @@
-import { 
+import {
   ShoppingCartIcon,
   CurrencyDollarIcon,
   UserGroupIcon,
   ChartBarIcon,
   ArrowTrendingUpIcon,
   ArrowTrendingDownIcon
-} from '@heroicons/react/24/outline';
+} from '@heroicons/react/24/outline'
+import type { ComponentType, SVGProps } from 'react'
 
 interface SalesMetric {
-  name: string;
-  value: string;
-  change: string;
-  changeType: 'increase' | 'decrease';
-  icon: any; // Using any for now to resolve type issues
+  name: string
+  value: string
+  change: string
+  changeType: 'increase' | 'decrease'
+  icon: ComponentType<SVGProps<SVGSVGElement>>
 }
 
 interface Order {

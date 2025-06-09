@@ -8,7 +8,7 @@ export const sql = neon(process.env.DATABASE_URL!)
 export const db = drizzle(sql)
 
 // Helper function for raw SQL queries
-export async function executeQuery(query: string, params: any[] = []) {
+export async function executeQuery(query: string, params: unknown[] = []) {
   try {
     // Use sql.query instead of directly calling sql for parameterized queries
     const result = await sql.query(query, params)

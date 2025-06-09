@@ -73,29 +73,6 @@ const inventoryMetrics: InventoryMetric[] = [
   },
 ];
 
-const stockItems: StockItem[] = [
-  {
-    id: 1,
-    name: 'Laptop Pro X1',
-    sku: 'LP-X1-2024',
-    quantity: 45,
-    status: 'In Stock',
-  },
-  {
-    id: 2,
-    name: 'Wireless Mouse',
-    sku: 'WM-001',
-    quantity: 5,
-    status: 'Low Stock',
-  },
-  {
-    id: 3,
-    name: '4K Monitor',
-    sku: 'MN-4K-27',
-    quantity: 0,
-    status: 'Out of Stock',
-  },
-];
 
 export default function InventoryPage() {
   const [products, setProducts] = useState<Product[]>([])
