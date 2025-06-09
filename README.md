@@ -75,13 +75,11 @@ The backend lives in the `backend/` directory. To run it locally with SQLite:
 
 ```bash
 cd backend
-pip install -r requirements.txt
-pip install -r requirements-test.txt
+./setup-tests.sh
 export DATABASE_URL=sqlite:///erp.db  # optional, defaults to this value
 uvicorn main:app --reload
 ```
-
-Both `requirements.txt` and `requirements-test.txt` must be installed before running `pytest`.
+Both `requirements.txt` and `requirements-test.txt` must be installed before running `pytest`. The `setup-tests.sh` script installs them for you.
 
 Tables are created automatically on startup. Tests can be executed with:
 
