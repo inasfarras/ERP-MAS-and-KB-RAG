@@ -161,23 +161,6 @@ export default function Home() {
             </svg>
             <span className="font-bold">ERP-MAS</span>
           </Link>
-          <nav className="hidden items-center gap-6 md:flex">
-            <Link href="/finance" className="text-sm font-medium text-gray-600 transition-colors hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50">
-              Finance
-            </Link>
-            <Link href="/sales" className="text-sm font-medium text-gray-600 transition-colors hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50">
-              Sales
-            </Link>
-            <Link href="/inventory" className="text-sm font-medium text-gray-600 transition-colors hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50">
-              Inventory
-            </Link>
-            <Link href="/hr" className="text-sm font-medium text-gray-600 transition-colors hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50">
-              HR
-            </Link>
-            <Link href="/projects" className="text-sm font-medium text-gray-600 transition-colors hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50">
-              Projects
-            </Link>
-          </nav>
           <div className="flex items-center gap-4">
             <Button variant="ghost" size="sm">Sign In</Button>
             <Button size="sm">Sign Up</Button>

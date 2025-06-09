@@ -34,14 +34,6 @@ interface InventoryMetric {
   icon: ComponentType<SVGProps<SVGSVGElement>>
 }
 
-interface StockItem {
-  id: number;
-  name: string;
-  sku: string;
-  quantity: number;
-  status: 'In Stock' | 'Low Stock' | 'Out of Stock';
-}
-
 const inventoryMetrics: InventoryMetric[] = [
   {
     name: 'Total Items',
