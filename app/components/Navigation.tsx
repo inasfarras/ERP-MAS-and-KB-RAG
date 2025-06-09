@@ -1,7 +1,8 @@
 "use client"
 
-import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import Link from 'next/link'
+import { usePathname } from 'next/navigation'
+import type { ComponentType, SVGProps } from 'react'
 import { 
   HomeIcon, 
   CurrencyDollarIcon, 
@@ -14,9 +15,9 @@ import {
 } from '@heroicons/react/24/outline';
 
 interface NavigationItem {
-  name: string;
-  href: string;
-  icon: any; // Using any for now to resolve type issues
+  name: string
+  href: string
+  icon: ComponentType<SVGProps<SVGSVGElement>>
 }
 
 const navigation: NavigationItem[] = [
