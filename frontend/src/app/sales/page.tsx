@@ -8,7 +8,7 @@ export default function Sales() {
   const { data: salesData } = useQuery({
     queryKey: ['sales-data'],
     queryFn: async () => {
-      const response = await axios.get('/api/sales/summary')
+      const response = await axios.get('http://localhost:8000/api/sales/summary')
       return response.data
     }
   })

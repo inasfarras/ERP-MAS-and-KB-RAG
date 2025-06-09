@@ -104,8 +104,8 @@ export default function FinancePage() {
     async function fetchFinancialData() {
       try {
         const [transactionsRes, accountsRes] = await Promise.all([
-          fetch("/api/finance/transactions"),
-          fetch("/api/finance/accounts"),
+          fetch("http://localhost:8000/api/finance/transactions"),
+          fetch("http://localhost:8000/api/finance/accounts"),
         ])
 
         const transactionsData = await transactionsRes.json()
