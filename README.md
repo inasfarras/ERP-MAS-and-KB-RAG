@@ -69,24 +69,6 @@ The application will be available at `http://localhost:3000`
 - `pnpm lint` - Run ESLint
 - `pnpm test` - Run tests
 
-### Backend API (FastAPI)
-
-The backend lives in the `backend/` directory. To run it locally with SQLite:
-
-```bash
-cd backend
-./setup-tests.sh
-export DATABASE_URL=sqlite:///erp.db  # optional, defaults to this value
-uvicorn main:app --reload
-```
-Both `requirements.txt` and `requirements-test.txt` must be installed before running `pytest`. The `setup-tests.sh` script installs them for you.
-
-Tables are created automatically on startup. Tests can be executed with:
-
-```bash
-pytest
-```
-
 ### Code Style
 
 We use ESLint and Prettier for code formatting. Run `pnpm lint` to check your code style.
