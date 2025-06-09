@@ -1,4 +1,5 @@
 from typing import Dict, Any
+from fastapi import FastAPI
 from fastapi.openapi.utils import get_openapi
 
 # API Documentation Metadata
@@ -100,10 +101,8 @@ API_TAGS_METADATA = [
     }
 ]
 
-def custom_openapi() -> Dict[str, Any]:
-    """
-    Custom OpenAPI schema generator with additional metadata and security schemes
-    """
+def custom_openapi(app: FastAPI) -> Dict[str, Any]:
+    """Generate a custom OpenAPI schema for the provided FastAPI instance."""
     if app.openapi_schema:
         return app.openapi_schema
 
