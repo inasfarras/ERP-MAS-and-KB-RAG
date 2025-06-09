@@ -318,7 +318,7 @@ function getPayloadConfigFromPayload(config: ChartConfig, payload: unknown, key:
 }
 
 interface ChartProps {
-  data: any[]
+  data: Record<string, unknown>[]
   index: string
   categories: string[]
   colors?: string[]

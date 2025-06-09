@@ -1,55 +1,44 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useEffect, useState, type ComponentType, type SVGProps } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { BarChart, LineChart } from "@tremor/react"
 import {
-  LayoutDashboard,
   DollarSign,
   ShoppingCart,
   Package,
-  Workflow,
-  Briefcase,
-  Layers,
-  BarChart2,
   Settings,
   Users,
   AlertTriangle,
   CreditCard,
-  Activity,
   PlusCircle,
   ClipboardList,
-  Share2,
-  BrainCircuit
+  MoveRight
 } from "lucide-react"
 import Link from "next/link"
-import DashboardMetrics from "@/components/dashboard-metrics"
 import RecentAlerts from "@/components/recent-alerts"
 import { DatabaseExtensionPoint, KGRAGExtensionPoint, MASExtensionPoint } from "@/components/extension-points"
 import { 
   ArrowUpIcon,
   ArrowDownIcon
 } from '@heroicons/react/24/outline';
-import { ForwardRefExoticComponent, SVGProps } from 'react';
 import { Separator } from "@/components/ui/separator";
-import { MoveRight } from "lucide-react";
 
-type HeroIcon = ForwardRefExoticComponent<SVGProps<SVGSVGElement>>;
 
 interface Stat {
-  name: string;
-  value: string;
-  change: string;
-  changeType: 'increase' | 'decrease';
-  icon: any; // Using any for now to resolve type issues
+  name: string
+  value: string
+  change: string
+  changeType: 'increase' | 'decrease'
+  icon: React.ComponentType<React.SVGProps<SVGSVGElement>>
 }
 
 interface QuickAction {
-  name: string;
-  href: string;
-  icon: any; // Using any for now to resolve type issues
+  name: string
+  href: string
+  icon: React.ComponentType<React.SVGProps<SVGSVGElement>>
 }
 
 const stats: Stat[] = [
@@ -91,8 +80,27 @@ const quickActions: QuickAction[] = [
   { name: 'System Settings', href: '/settings', icon: Settings },
 ];
 
+interface FinancialMetrics {
+  total_revenue: number
+  open_orders: number
+  low_stock_items: number
+  active_projects: number
+}
+
+interface SalesTrendEntry {
+  month: string
+  total_sales: number
+  order_count: number
+}
+
+interface DashboardData {
+  financialMetrics: FinancialMetrics
+  recentAlerts: unknown[]
+  salesTrend: SalesTrendEntry[]
+}
+
 export default function Home() {
-  const [dashboardData, setDashboardData] = useState<any>({
+  const [dashboardData, setDashboardData] = useState<DashboardData>({
     financialMetrics: {
       total_revenue: 0,
       open_orders: 0,
@@ -254,8 +262,9 @@ export default function Home() {
           <div className="space-y-6">
             <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
               {stats.map((stat) => {
-                const Icon: any = stat.icon;
-                const ArrowIcon: any = stat.changeType === 'increase' ? ArrowUpIcon : ArrowDownIcon;
+                const Icon: ComponentType<SVGProps<SVGSVGElement>> = stat.icon
+                const ArrowIcon: ComponentType<SVGProps<SVGSVGElement>> =
+                  stat.changeType === 'increase' ? ArrowUpIcon : ArrowDownIcon
                 return (
                   <div
                     key={stat.name}
@@ -307,7 +316,7 @@ export default function Home() {
                 </h3>
                 <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-5">
                   {quickActions.map((action) => {
-                    const Icon = action.icon;
+                    const Icon: ComponentType<SVGProps<SVGSVGElement>> = action.icon
                     return (
                       <a
                         key={action.name}
