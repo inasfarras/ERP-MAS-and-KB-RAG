@@ -1,13 +1,7 @@
 "use client"
 
-import { useEffect, useState } from "react"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { BarChart } from "@/components/ui/chart"
-import { Plus, ArrowUp, ArrowDown, FileText } from "lucide-react"
-import Link from "next/link"
+import { type ComponentType, type SVGProps } from "react"
+
 import { 
   CurrencyDollarIcon,
   BanknotesIcon,
@@ -18,11 +12,11 @@ import {
 } from '@heroicons/react/24/outline';
 
 interface FinancialMetric {
-  name: string;
-  value: string;
-  change: string;
-  changeType: 'increase' | 'decrease';
-  icon: any; // Using any for now to resolve type issues
+  name: string
+  value: string
+  change: string
+  changeType: 'increase' | 'decrease'
+  icon: ComponentType<SVGProps<SVGSVGElement>>
 }
 
 interface Transaction {
@@ -33,12 +27,6 @@ interface Transaction {
   status: 'Paid' | 'Pending' | 'Completed';
 }
 
-interface Account {
-  id: number;
-  name: string;
-  type: string;
-  balance: number;
-}
 
 const financialMetrics: FinancialMetric[] = [
   {
@@ -96,62 +84,6 @@ const recentTransactions: Transaction[] = [
 ];
 
 export default function FinancePage() {
-  const [transactions, setTransactions] = useState<Transaction[]>([])
-  const [accounts, setAccounts] = useState<Account[]>([])
-  const [loading, setLoading] = useState(true)
-
-  useEffect(() => {
-    async function fetchFinancialData() {
-      try {
-        const [transactionsRes, accountsRes] = await Promise.all([
-          fetch("http://localhost:8000/api/finance/transactions"),
-          fetch("http://localhost:8000/api/finance/accounts"),
-        ])
-
-        const transactionsData = await transactionsRes.json()
-        const accountsData = await accountsRes.json()
-
-        setTransactions(transactionsData)
-        setAccounts(accountsData || [])
-      } catch (error) {
-        console.error("Error fetching financial data:", error)
-      } finally {
-        setLoading(false)
-      }
-    }
-
-    fetchFinancialData()
-  }, [])
-
-  const formatCurrency = (value: number) => {
-    return new Intl.NumberFormat("en-US", {
-      style: "currency",
-      currency: "USD",
-    }).format(value)
-  }
-
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString("en-US", {
-      year: "numeric",
-      month: "short",
-      day: "numeric",
-    })
-  }
-
-  // Calculate financial metrics
-  const totalAssets = accounts.filter((a) => a.type === "asset").reduce((sum, account) => sum + account.balance, 0)
-
-  const totalLiabilities = accounts
-    .filter((a) => a.type === "liability")
-    .reduce((sum, account) => sum + account.balance, 0)
-
-  const totalEquity = accounts.filter((a) => a.type === "equity").reduce((sum, account) => sum + account.balance, 0)
-
-  const totalRevenue = accounts.filter((a) => a.type === "revenue").reduce((sum, account) => sum + account.balance, 0)
-
-  const totalExpenses = accounts.filter((a) => a.type === "expense").reduce((sum, account) => sum + account.balance, 0)
-
-  const netIncome = totalRevenue - totalExpenses
 
   return (
     <div className="space-y-6">
@@ -176,8 +108,11 @@ export default function FinancePage() {
 
       <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
         {financialMetrics.map((metric) => {
-          const Icon = metric.icon;
-          const ArrowIcon: any = metric.changeType === 'increase' ? ArrowTrendingUpIcon : ArrowTrendingDownIcon;
+          const Icon = metric.icon
+          const ArrowIcon: ComponentType<SVGProps<SVGSVGElement>> =
+            metric.changeType === 'increase'
+              ? ArrowTrendingUpIcon
+              : ArrowTrendingDownIcon
           return (
             <div
               key={metric.name}

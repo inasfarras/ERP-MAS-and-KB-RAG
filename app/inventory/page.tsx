@@ -1,13 +1,11 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useEffect, useState, type ComponentType, type SVGProps } from "react"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { Badge } from "@/components/ui/badge"
 import { Search, Plus, AlertTriangle } from "lucide-react"
-import Link from "next/link"
 import { 
   CubeIcon,
   ArrowTrendingUpIcon,
@@ -29,11 +27,11 @@ interface Product {
 }
 
 interface InventoryMetric {
-  name: string;
-  value: string;
-  change: string;
-  changeType: 'increase' | 'decrease';
-  icon: any; // Using any for now to resolve type issues
+  name: string
+  value: string
+  change: string
+  changeType: 'increase' | 'decrease'
+  icon: ComponentType<SVGProps<SVGSVGElement>>
 }
 
 interface StockItem {
