@@ -8,7 +8,7 @@ export default function Inventory() {
   const { data: inventoryData } = useQuery({
     queryKey: ['inventory-data'],
     queryFn: async () => {
-      const response = await axios.get('/api/inventory/summary')
+      const response = await axios.get('http://localhost:8000/api/inventory/summary')
       return response.data
     }
   })

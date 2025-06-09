@@ -8,7 +8,7 @@ export default function Projects() {
   const { data: projectData } = useQuery({
     queryKey: ['project-data'],
     queryFn: async () => {
-      const response = await axios.get('/api/projects/summary')
+      const response = await axios.get('http://localhost:8000/api/projects/summary')
       return response.data
     }
   })

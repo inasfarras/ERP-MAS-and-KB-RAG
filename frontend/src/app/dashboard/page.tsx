@@ -9,7 +9,7 @@ export default function Dashboard() {
   const { data: metrics } = useQuery({
     queryKey: ['dashboard-metrics'],
     queryFn: async () => {
-      const response = await axios.get('/api/dashboard/metrics')
+      const response = await axios.get('http://localhost:8000/api/dashboard/metrics')
       return response.data
     }
   })

@@ -8,7 +8,7 @@ export default function Finance() {
   const { data: financeData } = useQuery({
     queryKey: ['finance-data'],
     queryFn: async () => {
-      const response = await axios.get('/api/finance/summary')
+      const response = await axios.get('http://localhost:8000/api/finance/summary')
       return response.data
     }
   })

@@ -118,7 +118,9 @@ export default function InventoryPage() {
           queryParams.append("category", selectedCategory)
         }
 
-        const response = await fetch(`/api/inventory/products?${queryParams}`)
+        const response = await fetch(
+          `http://localhost:8000/api/inventory/products?${queryParams}`,
+        )
         const data = await response.json()
         setProducts(data)
 

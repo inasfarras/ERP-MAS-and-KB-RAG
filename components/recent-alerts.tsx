@@ -20,7 +20,7 @@ export default function RecentAlerts() {
   useEffect(() => {
     async function fetchAlerts() {
       try {
-        const response = await fetch("/api/dashboard")
+        const response = await fetch("http://localhost:8000/api/dashboard")
         const data = await response.json()
         setAlerts(data.recentAlerts || [])
       } catch (error) {
