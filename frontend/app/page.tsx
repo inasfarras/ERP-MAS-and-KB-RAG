@@ -6,15 +6,18 @@ import { Separator } from "@/components/ui/separator";
 import { MoveRight } from "lucide-react"
 import Link from "next/link"
 import { useAuthStore } from "@/store/auth";
-import Dashboard from "@/components/Dashboard";
 
 export default function Home() {
   const { isLoggedIn } = useAuthStore();
 
   if (isLoggedIn) {
-    return <Dashboard />;
+    return <HomePage />;
   }
 
+  return <HomePage />;
+}
+
+function HomePage() {
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       <main className="container py-12 md:py-24">
@@ -82,7 +85,7 @@ export default function Home() {
           />
           <AICapability
             title="Predictive Analytics"
-            description="Forecast sales, predict inventory needs, and identify business trends with AI-driven analytics."
+            description="Forecast sales, predict inventory needs, and identify industry trends with AI-driven analytics."
           />
         </div>
       </main>
