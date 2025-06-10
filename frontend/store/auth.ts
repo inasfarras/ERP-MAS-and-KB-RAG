@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import { persist, createJSONStorage } from 'zustand/middleware';
 
 interface AuthState {
   isLoggedIn: boolean;
@@ -7,9 +8,17 @@ interface AuthState {
   logout: () => void;
 }
 
-export const useAuthStore = create<AuthState>()((set) => ({
-  isLoggedIn: false,
-  user: null,
-  login: (user) => set({ isLoggedIn: true, user }),
-  logout: () => set({ isLoggedIn: false, user: null }),
-})); 
+export const useAuthStore = create<AuthState>()(
+  persist(
+    (set) => ({
+      isLoggedIn: false,
+      user: null,
+      login: (user) => set({ isLoggedIn: true, user }),
+      logout: () => set({ isLoggedIn: false, user: null }),
+    }),
+    {
+      name: 'auth-storage',
+      storage: createJSONStorage(() => localStorage),
+    }
+  )
+); 

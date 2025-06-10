@@ -6,12 +6,15 @@ import { Separator } from "@/components/ui/separator";
 import { MoveRight } from "lucide-react"
 import Link from "next/link"
 import { useAuthStore } from "@/store/auth";
+import { useRouter } from "next/navigation";
 
 export default function Home() {
   const { isLoggedIn } = useAuthStore();
+  const router = useRouter();
 
   if (isLoggedIn) {
-    return <HomePage />;
+    router.push("/dashboard");
+    return null; // Or a loading spinner
   }
 
   return <HomePage />;
