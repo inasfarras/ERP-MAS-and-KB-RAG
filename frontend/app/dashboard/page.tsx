@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { BarChart, LineChart } from "@tremor/react"
+import Container from '@/components/Container'
 import {
   DollarSign,
   ShoppingCart,
@@ -144,7 +145,7 @@ export default function Dashboard() {
 
   if (isLoading) {
     return (
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <Container className="py-8">
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
           {/* Skeleton loading for stats cards */}
           {stats.map((_, index) => (
@@ -170,22 +171,34 @@ export default function Dashboard() {
             </CardContent>
           </Card>
         </div>
-      </div>
+      </Container>
     );
   }
 
   if (error) {
     return (
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 text-red-600">
-        <h2 className="text-xl font-bold">Error Loading Dashboard</h2>
-        <p>There was an issue fetching your dashboard data: {error}</p>
-        <p>Please try again later or contact support.</p>
-      </div>
+      <Container className="py-8">
+        <Card className="border-red-500 bg-red-50 dark:bg-red-950 text-red-800 dark:text-red-200">
+          <CardHeader>
+            <CardTitle className="text-xl font-bold flex items-center">
+              <AlertTriangle className="h-6 w-6 mr-2" />
+              Error Loading Dashboard
+            </CardTitle>
+            <CardDescription className="text-red-700 dark:text-red-300">
+              There was an issue fetching your dashboard data. Please ensure the backend server is running.
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <p className="font-medium">Details: {error}</p>
+            <p className="mt-2">If the issue persists, please try again later or contact support.</p>
+          </CardContent>
+        </Card>
+      </Container>
     );
   }
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <Container className="py-8">
       <div className="space-y-6">
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
           {stats.map((stat) => {
@@ -340,6 +353,6 @@ export default function Dashboard() {
           </CardFooter>
         </Card>
       </div>
-    </div>
+    </Container>
   )
 } 
