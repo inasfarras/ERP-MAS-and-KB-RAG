@@ -105,17 +105,21 @@ export default function Dashboard() {
     },
     recentAlerts: [],
     salesTrend: [],
-  })
+  });
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     async function fetchDashboardData() {
+      setIsLoading(true);
+      setError(null);
       try {
-        const response = await fetch("http://localhost:8000/api/dashboard")
+        const response = await fetch("http://localhost:8000/api/dashboard");
         if (!response.ok) {
-          console.error("Error fetching dashboard data:", response.statusText)
-          return
+          const errorText = await response.text();
+          throw new Error(`Failed to fetch dashboard data: ${response.status} ${errorText}`);
         }
-        const data = await response.json()
+        const data = await response.json();
         const formattedData = {
           financialMetrics: {
             total_revenue: data.financialMetrics?.total_revenue || 0,
@@ -125,15 +129,60 @@ export default function Dashboard() {
           },
           recentAlerts: data.recentAlerts || [],
           salesTrend: data.salesTrend || [],
-        }
-        setDashboardData(formattedData)
-      } catch (error) {
-        console.error("Error fetching dashboard data:", error)
+        };
+        setDashboardData(formattedData);
+      } catch (error: any) {
+        console.error("Error fetching dashboard data:", error);
+        setError(error.message || "An unexpected error occurred.");
+      } finally {
+        setIsLoading(false);
       }
     }
 
-    fetchDashboardData()
-  }, [])
+    fetchDashboardData();
+  }, []);
+
+  if (isLoading) {
+    return (
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+          {/* Skeleton loading for stats cards */}
+          {stats.map((_, index) => (
+            <Card key={index}>
+              <CardContent className="p-6">
+                <div className="h-24 bg-gray-200 rounded animate-pulse"></div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+        <div className="bg-white shadow rounded-lg mt-6 p-6">
+          <div className="h-32 bg-gray-200 rounded animate-pulse"></div>
+        </div>
+        <div className="grid grid-cols-1 gap-6 lg:grid-cols-3 mt-6">
+          <Card className="lg:col-span-1">
+            <CardContent className="p-6">
+              <div className="h-48 bg-gray-200 rounded animate-pulse"></div>
+            </CardContent>
+          </Card>
+          <Card className="lg:col-span-2">
+            <CardContent className="p-6">
+              <div className="h-48 bg-gray-200 rounded animate-pulse"></div>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 text-red-600">
+        <h2 className="text-xl font-bold">Error Loading Dashboard</h2>
+        <p>There was an issue fetching your dashboard data: {error}</p>
+        <p>Please try again later or contact support.</p>
+      </div>
+    );
+  }
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
