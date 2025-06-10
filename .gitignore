@@ -55,3 +55,6 @@ erp/
 
 # Node modules
 node_modules/
+
+# next.js build output
+frontend/.next/
