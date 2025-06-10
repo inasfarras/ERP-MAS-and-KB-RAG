@@ -10,7 +10,7 @@ import schemas
 router = APIRouter()
 
 # Project endpoints
-@router.post("/projects", response_model=schemas.Project)
+@router.post("/projects", response_model=schemas.Project, status_code=status.HTTP_201_CREATED)
 async def create_project(project: schemas.ProjectCreate, db: Session = Depends(get_db)):
     # Validate customer if provided
     if project.customer_id:
@@ -115,7 +115,7 @@ async def update_project_status(project_id: int, status_update: schemas.StatusUp
     return db_project
 
 # Task endpoints
-@router.post("/tasks", response_model=schemas.Task)
+@router.post("/tasks", response_model=schemas.Task, status_code=status.HTTP_201_CREATED)
 async def create_task(task: schemas.TaskCreate, project_id: int, db: Session = Depends(get_db)):
     # Validate project exists
     project = db.query(models.Project).filter(models.Project.id == project_id).first()

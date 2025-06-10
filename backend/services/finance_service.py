@@ -10,7 +10,7 @@ import schemas
 router = APIRouter()
 
 # Accounts endpoints
-@router.post("/accounts", response_model=schemas.Account)
+@router.post("/accounts", response_model=schemas.Account, status_code=status.HTTP_201_CREATED)
 async def create_account(account: schemas.AccountCreate, db: Session = Depends(get_db)):
     db_account = models.Account(**account.dict())
     db.add(db_account)
@@ -169,7 +169,7 @@ async def delete_transaction(transaction_id: int, db: Session = Depends(get_db))
     return None
 
 # Invoices endpoints
-@router.post("/invoices", response_model=schemas.Invoice)
+@router.post("/invoices", response_model=schemas.Invoice, status_code=status.HTTP_201_CREATED)
 async def create_invoice(invoice: schemas.InvoiceCreate, db: Session = Depends(get_db)):
     # Validate customer exists
     customer = db.query(models.Customer).filter(models.Customer.id == invoice.customer_id).first()

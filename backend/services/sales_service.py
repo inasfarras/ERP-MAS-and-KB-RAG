@@ -11,7 +11,7 @@ from services import inventory_service, process_service
 router = APIRouter()
 
 # Customer endpoints
-@router.post("/customers", response_model=schemas.Customer)
+@router.post("/customers", response_model=schemas.Customer, status_code=status.HTTP_201_CREATED)
 async def create_customer(customer: schemas.CustomerCreate, db: Session = Depends(get_db)):
     db_customer = models.Customer(**customer.dict())
     db.add(db_customer)
@@ -46,7 +46,7 @@ async def update_customer(customer_id: int, customer: schemas.CustomerUpdate, db
     return db_customer
 
 # Order endpoints
-@router.post("/orders", response_model=schemas.Order)
+@router.post("/orders", response_model=schemas.Order, status_code=status.HTTP_201_CREATED)
 async def create_order(order: schemas.OrderCreate, db: Session = Depends(get_db)):
     # Validate customer exists
     customer = db.query(models.Customer).filter(models.Customer.id == order.customer_id).first()

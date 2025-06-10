@@ -11,7 +11,7 @@ import schemas
 router = APIRouter()
 
 # Process Event endpoints
-@router.post("/events", response_model=schemas.ProcessEvent)
+@router.post("/events", response_model=schemas.ProcessEvent, status_code=status.HTTP_201_CREATED)
 async def create_process_event(event: schemas.ProcessEventCreate, db: Session = Depends(get_db)):
     db_event = models.ProcessEvent(**event.dict())
     db.add(db_event)
@@ -100,7 +100,7 @@ async def update_process_event_status(
     return db_event
 
 # Workflow Rule endpoints
-@router.post("/workflow-rules", response_model=schemas.WorkflowRule)
+@router.post("/workflow-rules", response_model=schemas.WorkflowRule, status_code=status.HTTP_201_CREATED)
 async def create_workflow_rule(rule: schemas.WorkflowRuleCreate, db: Session = Depends(get_db)):
     # Validate condition and action JSON
     try:
