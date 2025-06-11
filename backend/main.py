@@ -18,6 +18,8 @@ from services import (
     process_service,
     project_service,
     dashboard_service,
+    agent_service,
+    knowledge_service,
 )
 from docs import (
     API_TITLE,
@@ -203,6 +205,18 @@ app.include_router(
     tags=["Business Intelligence"]
 )
 
+app.include_router(
+    agent_service.router,
+    prefix="/api/mas",
+    tags=["AI Integration - MAS"]
+)
+
+app.include_router(
+    knowledge_service.router,
+    prefix="/api/knowledge",
+    tags=["AI Integration - Knowledge Graph & RAG"]
+)
+
 # Extension points for future MAS and KG-RAG integration
 @app.get("/api/extension/mas/status", tags=["AI Integration"])
 async def mas_status():
@@ -213,10 +227,10 @@ async def mas_status():
         Dict containing the current status and available extension points
     """
     return {
-        "status": "not_implemented",
-        "message": "Multi-Agent System integration is prepared but not yet implemented",
+        "status": "in_progress",
+        "message": "Multi-Agent System integration is in progress. Agents can be managed via /api/mas/agents",
         "extension_points": [
-            "/api/extension/mas/agents",
+            "/api/mas/agents",
             "/api/extension/mas/tasks",
             "/api/extension/mas/coordination"
         ]
@@ -231,12 +245,12 @@ async def kg_rag_status():
         Dict containing the current status and available extension points
     """
     return {
-        "status": "not_implemented",
-        "message": "Knowledge Graph RAG integration is prepared but not yet implemented",
+        "status": "in_progress",
+        "message": "Knowledge Graph RAG integration is in progress. Knowledge entities can be managed via /api/knowledge/entities",
         "extension_points": [
-            "/api/extension/kg-rag/query",
-            "/api/extension/kg-rag/entities",
-            "/api/extension/kg-rag/relationships"
+            "/api/knowledge/query",
+            "/api/knowledge/entities",
+            "/api/knowledge/relationships"
         ]
     }
 
