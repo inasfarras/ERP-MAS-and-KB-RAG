@@ -29,6 +29,8 @@ from docs import (
     custom_openapi
 )
 
+import os
+
 # Create database tables
 models.Base.metadata.create_all(bind=engine)
 
