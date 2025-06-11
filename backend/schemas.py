@@ -447,31 +447,44 @@ class Dashboard(DashboardBase, TimestampMixin):
 class AgentConfigBase(BaseModel):
     agent_name: str
     agent_type: str
-    configuration: str
+    configuration: Any
     is_active: bool = True
 
 class AgentConfigCreate(AgentConfigBase):
     pass
 
+class AgentConfigUpdate(BaseModel):
+    agent_name: Optional[str] = None
+    agent_type: Optional[str] = None
+    configuration: Optional[Any] = None
+    is_active: Optional[bool] = None
+
 class AgentConfig(AgentConfigBase, TimestampMixin):
     id: int
-    
+
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 class KnowledgeEntityBase(BaseModel):
     entity_type: str
     entity_id: int
-    properties: str
+    properties: Any
+    embedding: Optional[List[float]] = None
 
 class KnowledgeEntityCreate(KnowledgeEntityBase):
     pass
 
+class KnowledgeEntityUpdate(BaseModel):
+    entity_type: Optional[str] = None
+    entity_id: Optional[int] = None
+    properties: Optional[Any] = None
+    embedding: Optional[List[float]] = None
+
 class KnowledgeEntity(KnowledgeEntityBase, TimestampMixin):
     id: int
-    
+
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 class EntityRelationshipBase(BaseModel):
     source_entity_id: int
