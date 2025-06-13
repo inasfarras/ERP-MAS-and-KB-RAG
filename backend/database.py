@@ -11,10 +11,6 @@ load_dotenv()
 # database if none is provided.
 SQLALCHEMY_DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///erp.db")
 
-# Explicitly re-encode to ensure UTF-8 consistency for psycopg2
-if not SQLALCHEMY_DATABASE_URL.startswith("sqlite"):
-    SQLALCHEMY_DATABASE_URL = SQLALCHEMY_DATABASE_URL.encode('latin-1').decode('utf-8')
-
 # Additional connection arguments for SQLite
 connect_args = {
     "check_same_thread": False
