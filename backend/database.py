@@ -12,7 +12,7 @@ import os
 # DATABASE_URL = os.getenv("DATABASE_URL") # Temporarily commented out for testing
 
 # Hardcode DATABASE_URL for testing purposes
-DATABASE_URL = "postgresql+psycopg://erpuser:Urd324fg44@127.0.0.1:5432/erpdb"
+DATABASE_URL = "postgresql+psycopg://erpuser:testpass@127.0.0.1:5433/erpdb"
 print(f"DATABASE_URL (hardcoded raw): {DATABASE_URL}")
 print(f"DATABASE_URL (hardcoded repr): {repr(DATABASE_URL)}")
 
