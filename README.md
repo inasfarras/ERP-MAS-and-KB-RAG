@@ -21,7 +21,7 @@ A modern, open-source Enterprise Resource Planning (ERP) system designed for mod
   - [FastAPI](https://fastapi.tiangolo.com/)
   - [Python](https://www.python.org/downloads/) (v3.10 or higher) and `pip`
   - [SQLAlchemy](https://www.sqlalchemy.org/) (for database interaction)
-  - [SQLite](https://www.sqlite.org/index.html) (for local development)
+  - [PostgreSQL](https://www.postgresql.org/) (for database)
 
 ## 🏗️ Project Structure
 

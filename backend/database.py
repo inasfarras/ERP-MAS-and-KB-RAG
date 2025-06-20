@@ -16,18 +16,8 @@ DATABASE_URL = "postgresql+psycopg://erpuser:testpass@127.0.0.1:5433/erpdb"
 print(f"DATABASE_URL (hardcoded raw): {DATABASE_URL}")
 print(f"DATABASE_URL (hardcoded repr): {repr(DATABASE_URL)}")
 
-if DATABASE_URL.startswith("sqlite"):
-    print("Using SQLite fallback (hardcoded).")
-else:
-    print("Attempting PostgreSQL connection with psycopg3 (hardcoded).")
-
-# Additional connection arguments for SQLite
-connect_args = {
-    "check_same_thread": False
-} if DATABASE_URL.startswith("sqlite") else {}
-
 # Create SQLAlchemy engine
-engine = create_engine(DATABASE_URL, connect_args=connect_args)
+engine = create_engine(DATABASE_URL)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 Base = declarative_base()
