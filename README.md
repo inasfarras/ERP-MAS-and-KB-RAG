@@ -78,7 +78,6 @@ The project is organized as a monorepo with a clear separation between the front
     ```
     The backend API will be available at `http://localhost:8000`.
 
-<<<<<<< HEAD
 ## 🛠️ Development
 
 ### Available Scripts
@@ -92,14 +91,6 @@ The project is organized as a monorepo with a clear separation between the front
 ### Code Style
 
 We use ESLint and Prettier for code formatting. Run `pnpm lint` to check your code style.
-=======
-2.  **Start the Frontend Development Server:**
-    From the `frontend` directory, run:
-    ```bash
-    pnpm dev
-    ```
-    The frontend application will be available at `http://localhost:3000`.
->>>>>>> work
 
 ## 🤝 Contributing
 
