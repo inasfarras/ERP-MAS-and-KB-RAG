@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { BarChart, LineChart } from "@tremor/react"
+import Container from '@/components/Container'
 import {
   DollarSign,
   ShoppingCart,
@@ -105,17 +106,21 @@ export default function Dashboard() {
     },
     recentAlerts: [],
     salesTrend: [],
-  })
+  });
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     async function fetchDashboardData() {
+      setIsLoading(true);
+      setError(null);
       try {
-        const response = await fetch("http://localhost:8000/api/dashboard")
+        const response = await fetch("http://localhost:8000/api/dashboard");
         if (!response.ok) {
-          console.error("Error fetching dashboard data:", response.statusText)
-          return
+          const errorText = await response.text();
+          throw new Error(`Failed to fetch dashboard data: ${response.status} ${errorText}`);
         }
-        const data = await response.json()
+        const data = await response.json();
         const formattedData = {
           financialMetrics: {
             total_revenue: data.financialMetrics?.total_revenue || 0,
@@ -125,18 +130,75 @@ export default function Dashboard() {
           },
           recentAlerts: data.recentAlerts || [],
           salesTrend: data.salesTrend || [],
-        }
-        setDashboardData(formattedData)
-      } catch (error) {
-        console.error("Error fetching dashboard data:", error)
+        };
+        setDashboardData(formattedData);
+      } catch (error: any) {
+        console.error("Error fetching dashboard data:", error);
+        setError(error.message || "An unexpected error occurred.");
+      } finally {
+        setIsLoading(false);
       }
     }
 
-    fetchDashboardData()
-  }, [])
+    fetchDashboardData();
+  }, []);
+
+  if (isLoading) {
+    return (
+      <Container className="py-8">
+        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+          {/* Skeleton loading for stats cards */}
+          {stats.map((_, index) => (
+            <Card key={index}>
+              <CardContent className="p-6">
+                <div className="h-24 bg-gray-200 rounded animate-pulse"></div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+        <div className="bg-white shadow rounded-lg mt-6 p-6">
+          <div className="h-32 bg-gray-200 rounded animate-pulse"></div>
+        </div>
+        <div className="grid grid-cols-1 gap-6 lg:grid-cols-3 mt-6">
+          <Card className="lg:col-span-1">
+            <CardContent className="p-6">
+              <div className="h-48 bg-gray-200 rounded animate-pulse"></div>
+            </CardContent>
+          </Card>
+          <Card className="lg:col-span-2">
+            <CardContent className="p-6">
+              <div className="h-48 bg-gray-200 rounded animate-pulse"></div>
+            </CardContent>
+          </Card>
+        </div>
+      </Container>
+    );
+  }
+
+  if (error) {
+    return (
+      <Container className="py-8">
+        <Card className="border-red-500 bg-red-50 dark:bg-red-950 text-red-800 dark:text-red-200">
+          <CardHeader>
+            <CardTitle className="text-xl font-bold flex items-center">
+              <AlertTriangle className="h-6 w-6 mr-2" />
+              Error Loading Dashboard
+            </CardTitle>
+            <CardDescription className="text-red-700 dark:text-red-300">
+              There was an issue fetching your dashboard data. Please ensure the backend server is running.
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <p className="font-medium">Details: {error}</p>
+            <p className="mt-2">If the issue persists, please try again later or contact support.</p>
+          </CardContent>
+        </Card>
+      </Container>
+    );
+  }
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <Container className="py-8">
       <div className="space-y-6">
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
           {stats.map((stat) => {
@@ -291,6 +353,6 @@ export default function Dashboard() {
           </CardFooter>
         </Card>
       </div>
-    </div>
+    </Container>
   )
 } 

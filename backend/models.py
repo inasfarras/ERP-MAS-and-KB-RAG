@@ -1,6 +1,7 @@
-from sqlalchemy import Boolean, Column, ForeignKey, Integer, String, Float, DateTime, Text, Enum, Table
+from sqlalchemy import Boolean, Column, ForeignKey, Integer, String, Float, DateTime, Text, Enum, Table, ARRAY
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
+from sqlalchemy.dialects.postgresql import JSONB
 import enum
 from database import Base
 import bcrypt
@@ -406,7 +407,7 @@ class AgentConfig(Base):
     id = Column(Integer, primary_key=True, index=True)
     agent_name = Column(String, unique=True)
     agent_type = Column(String)  # reasoning, retrieval, task, etc.
-    configuration = Column(Text)  # JSON configuration
+    configuration = Column(JSONB)  # JSON configuration
     is_active = Column(Boolean, default=True)
     created_at = Column(DateTime, default=func.now())
     updated_at = Column(DateTime, default=func.now(), onupdate=func.now())
@@ -417,7 +418,8 @@ class KnowledgeEntity(Base):
     id = Column(Integer, primary_key=True, index=True)
     entity_type = Column(String)  # product, customer, supplier, etc.
     entity_id = Column(Integer)  # ID in the respective table
-    properties = Column(Text)  # JSON properties for KG
+    properties = Column(JSONB)  # JSON properties for KG
+    embedding = Column(ARRAY(Float), nullable=True) # Vector embedding for RAG
     created_at = Column(DateTime, default=func.now())
     updated_at = Column(DateTime, default=func.now(), onupdate=func.now())
 

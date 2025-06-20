@@ -11,7 +11,7 @@ from services import process_service
 router = APIRouter()
 
 # Product endpoints
-@router.post("/products", response_model=schemas.Product)
+@router.post("/products", response_model=schemas.Product, status_code=status.HTTP_201_CREATED)
 async def create_product(product: schemas.ProductCreate, db: Session = Depends(get_db)):
     db_product = models.Product(**product.dict())
     db.add(db_product)
@@ -59,7 +59,7 @@ async def update_product(product_id: int, product: schemas.ProductUpdate, db: Se
     return db_product
 
 # Inventory Movement endpoints
-@router.post("/movements", response_model=schemas.InventoryMovement)
+@router.post("/movements", response_model=schemas.InventoryMovement, status_code=status.HTTP_201_CREATED)
 async def create_inventory_movement(movement: schemas.InventoryMovementCreate, db: Session = Depends(get_db)):
     # Validate product exists
     product = db.query(models.Product).filter(models.Product.id == movement.product_id).first()
@@ -129,7 +129,7 @@ async def get_inventory_movements(
     return movements
 
 # Supplier endpoints
-@router.post("/suppliers", response_model=schemas.Supplier)
+@router.post("/suppliers", response_model=schemas.Supplier, status_code=status.HTTP_201_CREATED)
 async def create_supplier(supplier: schemas.SupplierCreate, db: Session = Depends(get_db)):
     db_supplier = models.Supplier(**supplier.dict())
     db.add(db_supplier)
@@ -150,7 +150,7 @@ async def get_supplier(supplier_id: int, db: Session = Depends(get_db)):
     return supplier
 
 # Purchase Order endpoints
-@router.post("/purchase-orders", response_model=schemas.PurchaseOrder)
+@router.post("/purchase-orders", response_model=schemas.PurchaseOrder, status_code=status.HTTP_201_CREATED)
 async def create_purchase_order(purchase_order: schemas.PurchaseOrderCreate, db: Session = Depends(get_db)):
     # Validate supplier exists
     supplier = db.query(models.Supplier).filter(models.Supplier.id == purchase_order.supplier_id).first()
